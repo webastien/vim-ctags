@@ -27,18 +27,20 @@ endfunction
 
 function RebuildTags()
   let tagfiles = tagfiles()
+  let cmd_args = '--recurse'
 
   if len(tagfiles) == 1
-    let tagfile = get(tagfiles, 0)
+    let tagfile = fnamemodify(get(tagfiles, 0), ':p:h')
 
     if !filewritable(tagfile)
       echohl ErrorMsg | echo '"'. tagfile .'" is not writable!' | echohl None
       return
     endif
 
-    let tagdir = fnamemodify(tagfile, ':p:h')
+    let tagdir    = fnamemodify(tagfile, ': p: h')
+    let cmd_args .= ' --exclude=@.tags'
   else
-    call inputsave() | let tagdir = input('Root directory: ', fnamemodify(getcwd(), ':p'), 'dir') | call inputrestore()
+    call inputsave() | let tagdir = input('Root directory: ', fnamemodify(getcwd(), ':p:h'), 'dir') | call inputrestore() | echo ' '
 
     if tagdir == ''
       return
@@ -50,13 +52,13 @@ function RebuildTags()
     return
   endif
 
-  echo 'Processing tags list update...'
-  echo ExecCtagsCommand(tagdir, tagdir, '--recurse')
+  echohl Search | echo 'Processing tags list update...' | echohl None
+  echo ExecCtagsCommand(tagdir, tagdir, cmd_args)
 endfunction
 
 function ExecCtagsCommand(tagdir, source, args)
   let command  = g:tagbar_ctags_bin  .' --langmap=php:.php.inc.module.install.view.engine.theme --php-kinds=cdfi --languages=php'
-  let command .= ' --exclude=@.tags --exclude=.git --exclude=.svn --tag-relative=yes --totals=yes -f '. a:tagdir .'/.tags '. a:args .' '. a:source
+  let command .= ' --exclude=.git --exclude=.svn --tag-relative=yes --totals=yes -f '. a:tagdir .'/.tags '. a:args .' '. a:source
 
   return system(command)
 endfunction
