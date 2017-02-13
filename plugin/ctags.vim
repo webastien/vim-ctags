@@ -21,7 +21,7 @@ function GoToTag(name)
       return
     endtry
 
-    exe "tabnew" | exe "tag ". a:name | exe "norm zvzz"
+    exe "tabnew" | exe "tjump ". a:name | exe "norm zvzz"
   endif
 endfunction
 
@@ -56,7 +56,7 @@ endfunction
 
 function ExecCtagsCommand(tagdir, source, args)
   let command  = g:tagbar_ctags_bin  .' --langmap=php:.php.inc.module.install.view.engine.theme --php-kinds=cdfi --languages=php'
-  let command .= ' --tag-relative=yes --totals=yes -f '. a:tagdir .'/.tags '. a:args .' '. a:source
+  let command .= ' --exclude=@.tags --exclude=.git --exclude=.svn --tag-relative=yes --totals=yes -f '. a:tagdir .'/.tags '. a:args .' '. a:source
 
   return system(command)
 endfunction
