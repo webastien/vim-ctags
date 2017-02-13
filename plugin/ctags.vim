@@ -3,16 +3,23 @@ if !exists("g:tagbar_ctags_bin")
 endif
 
 function DisplayTag()
-  let s:tag = expand("<cword>")
+  return GoToTag(expand("<cword>"))
+endfunction
 
-  if s:tag != ""
+function DisplayGivenTag()
+  call   inputsave() | let s:tag = input('Tag name: ', expand("<cword>")) | call inputrestore()
+  return GoToTag(s:tag)
+endfunction
+
+function GoToTag(name)
+  if a:name != ""
     try
-      silent exe "ts ". s:tag
+      silent exe "ts ". a:name
     catch
       return
     endtry
 
-    exe "tabnew" | exe "tag ". s:tag | exe "norm zvzz"
+    exe "tabnew" | exe "tag ". a:name | exe "norm zvzz"
   endif
 endfunction
 
