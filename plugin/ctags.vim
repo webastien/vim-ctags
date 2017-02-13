@@ -1,5 +1,7 @@
+if exists('vim_ctags__loaded') | finish | endif | let vim_ctags__loaded = 1
+
 if !exists("g:tagbar_ctags_bin")
-    let g:tagbar_ctags_bin = substitute(system('which ctags'), "\n", '', '')
+  let g:tagbar_ctags_bin = substitute(system('which ctags'), "\n", '', '')
 endif
 
 function DisplayTag()
